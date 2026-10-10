@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 - VolunteerIntegration</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body>
+    <header>
+        <div class="logo"><a th:href="@{/}">VolunteerIntegration</a></div>
+    </header>
+
+    <main class="auth-container">
+        <h2>회원가입</h2>
+        <form>
+            <div class="form-group">
+                <label>이름</label>
+                <input type="text" placeholder="이름을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>이메일</label>
+                <input type="email" placeholder="이메일을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" placeholder="비밀번호를 입력하세요">
+            </div>
+            <button type="button" class="btn">가입하기</button>
+        </form>
+        <p style="margin-top: 1rem;"><a th:href="@{/login}">이미 계정이 있으신가요? 로그인</a></p>
+    </main>
+</body>
+</html>

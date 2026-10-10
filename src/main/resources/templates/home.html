@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>VolunteerIntegration - 통합 자원봉사</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body>
+    <header>
+        <div class="logo"><a th:href="@{/}">VolunteerIntegration</a></div>
+        <nav>
+            <a th:href="@{/}">홈</a>
+            <a th:href="@{/login}">로그인</a>
+            <a th:href="@{/signup}">회원가입</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>하나의 플랫폼에서 만나는 통합 자원봉사</h2>
+        <p>1365, VMS 및 다양한 기관의 봉사 기회를 한곳에서 확인하세요.</p>
+
+        <div class="search-box">
+            <input type="text" placeholder="지역 또는 봉사 분야 검색 (예: 강남구 환경정화)">
+            <button type="button">검색</button>
+        </div>
+
+        <section class="category-section">
+            <h3>봉사 카테고리</h3>
+            <div class="category-grid">
+                <button class="cat-btn">🌱 환경정화</button>
+                <button class="cat-btn">📚 교육/멘토링</button>
+                <button class="cat-btn">🤝 시설/돌봄</button>
+                <button class="cat-btn">🎨 재능기부</button>
+                <button class="cat-btn">🩸 헌혈/헌혈센터</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 VolunteerIntegration. All rights reserved.</p>
+    </footer>
+</body>
+</html>
