@@ -1,5 +1,8 @@
-build/
 .gradle/
+build/
+out/
 .idea/
-*.class
+*.iml
+.vscode/
 .DS_Store
+application-local.yml

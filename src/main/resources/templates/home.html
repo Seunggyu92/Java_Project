@@ -1,43 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>VolunteerIntegration - 통합 자원봉사</title>
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-</head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('홈')}"></head>
 <body>
-    <header>
-        <div class="logo"><a th:href="@{/}">VolunteerIntegration</a></div>
-        <nav>
-            <a th:href="@{/}">홈</a>
-            <a th:href="@{/login}">로그인</a>
-            <a th:href="@{/signup}">회원가입</a>
-        </nav>
-    </header>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-    <main>
-        <h2>하나의 플랫폼에서 만나는 통합 자원봉사</h2>
+<main class="container narrow">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="hero">
+        <h1>하나의 플랫폼에서 만나는 통합 자원봉사</h1>
         <p>1365, VMS 및 다양한 기관의 봉사 기회를 한곳에서 확인하세요.</p>
+        <form class="search-bar" th:action="@{/search}" action="#" method="get" role="search">
+            <input type="search" name="q" placeholder="지역 또는 봉사 분야 검색 (예: 강남구 환경정화)"
+                   aria-label="봉사 검색어">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+    </section>
 
-        <div class="search-box">
-            <input type="text" placeholder="지역 또는 봉사 분야 검색 (예: 강남구 환경정화)">
-            <button type="button">검색</button>
+    <section>
+        <h2 class="section-title">봉사 카테고리</h2>
+        <div class="category-grid">
+            <a th:each="c : ${categories}" class="category-button"
+               th:href="${c.code == 'BLOOD'} ? @{/blood} : @{/search(category=${c.code})}" href="#">
+                <span class="category-name" th:text="${c.icon} + ' ' + ${c.label}">🌱 환경정화</span>
+                <span class="category-count" th:if="${c.code != 'BLOOD'}"
+                      th:text="${#numbers.formatInteger(categoryCounts[c.code] ?: 0, 1, 'COMMA')} + '건'">0건</span>
+                <span class="category-count" th:if="${c.code == 'BLOOD'}"
+                      th:text="'헌혈의 집 ' + ${bloodCenterCount} + '곳'">헌혈의 집 0곳</span>
+            </a>
         </div>
+    </section>
 
-        <section class="category-section">
-            <h3>봉사 카테고리</h3>
-            <div class="category-grid">
-                <button class="cat-btn">🌱 환경정화</button>
-                <button class="cat-btn">📚 교육/멘토링</button>
-                <button class="cat-btn">🤝 시설/돌봄</button>
-                <button class="cat-btn">🎨 재능기부</button>
-                <button class="cat-btn">🩸 헌혈/헌혈센터</button>
-            </div>
-        </section>
-    </main>
+    <section class="stats">
+        <div class="stat">
+            <span class="stat-num" th:text="${#numbers.formatInteger(volunteerCount, 1, 'COMMA')}">0</span>
+            <span class="stat-label">1365 봉사활동</span>
+        </div>
+        <div class="stat">
+            <span class="stat-num" th:text="${#numbers.formatInteger(facilityCount, 1, 'COMMA')}">0</span>
+            <span class="stat-label">통합 시설</span>
+        </div>
+        <div class="stat">
+            <span class="stat-num" th:text="${#numbers.formatInteger(careServiceCount, 1, 'COMMA')}">0</span>
+            <span class="stat-label">돌봄 서비스</span>
+        </div>
+        <div class="stat">
+            <span class="stat-num" th:text="${bloodCenterCount}">0</span>
+            <span class="stat-label">헌혈의 집</span>
+        </div>
+    </section>
 
-    <footer>
-        <p>&copy; 2026 VolunteerIntegration. All rights reserved.</p>
-    </footer>
+    <section th:if="${!#lists.isEmpty(latest)}">
+        <div class="section-head">
+            <h2 class="section-title">최근 봉사활동</h2>
+            <a th:href="@{/search}" href="#" class="more">전체 보기 →</a>
+        </div>
+        <div class="card-grid">
+            <th:block th:each="v : ${latest}">
+                <a th:replace="~{fragments/layout :: volunteerCard(${v})}"></a>
+            </th:block>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
