@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('시설 찾기')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">시설 찾기</h1>
+    <p class="muted">사회복지시설 · VMS 봉사활동처 · 청소년시설 · 헌혈의 집을 하나로 합친 통합 시설 목록입니다.</p>
+
+    <form class="filter" th:action="@{/facilities}" th:object="${cond}" method="get" role="search">
+        <div class="search-bar">
+            <input type="search" th:field="*{q}" placeholder="시설명, 주소, 시설 종류 (예: 요양원 수원시)"
+                   aria-label="시설 검색어">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </div>
+        <div class="filter-row">
+            <label>지역
+                <select th:field="*{sido}">
+                    <option value="">전체</option>
+                    <option th:each="r : ${regions}" th:value="${r.shortName}" th:text="${r.shortName}">서울</option>
+                </select>
+            </label>
+            <label>분야
+                <select th:field="*{category}">
+                    <option value="">전체</option>
+                    <option th:each="c : ${categories}" th:value="${c.code}" th:text="${c.label}">시설/돌봄</option>
+                </select>
+            </label>
+            <label>출처
+                <select th:field="*{source}">
+                    <option value="">전체</option>
+                    <option th:each="s : ${sources}" th:value="${s}" th:text="${s}">사회복지시설</option>
+                </select>
+            </label>
+            <a th:href="@{/facilities}" href="#" class="btn btn-ghost">초기화</a>
+        </div>
+    </form>
+
+    <div class="result-head">
+        <p><strong th:text="${#numbers.formatInteger(result.total, 1, 'COMMA')}">0</strong>곳</p>
+    </div>
+
+    <div class="place-grid" th:if="${!result.empty}">
+        <a class="place-card" th:each="f : ${result.content}" th:href="@{/facilities/{id}(id=${f.id})}" href="#">
+            <div class="place-kicker">
+                <span class="source" th:text="${f.source}">출처</span>
+                <span class="muted small" th:text="${f.sido ?: ''}">서울</span>
+            </div>
+            <h2 class="place-name" th:text="${f.name}">시설명</h2>
+            <p class="place-type" th:text="${f.facilityType ?: '시설'}">분류</p>
+            <p class="place-address" th:text="${f.fullAddress}">주소</p>
+            <p class="place-phone" th:if="${f.phone != null}" th:text="${f.phone}">전화</p>
+        </a>
+    </div>
+
+    <section class="empty" th:if="${result.empty}">
+        <h2>조건에 맞는 시설이 없습니다</h2>
+        <p class="muted">검색어를 줄이거나 지역을 바꿔 보세요.</p>
+    </section>
+
+    <nav th:replace="~{fragments/layout :: pagination(${result}, ${cond})}"></nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

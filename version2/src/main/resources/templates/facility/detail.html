@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${facility.name})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <a th:href="@{/facilities}" href="#" class="back">← 시설 목록</a>
+
+    <div class="detail-layout">
+        <article class="panel">
+            <span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(facility.category.code)}"
+                  th:text="${facility.category.icon} + ' ' + ${facility.facilityType ?: facility.category.label}">분류</span>
+            <h1 class="detail-title" th:text="${facility.name}">시설명</h1>
+
+            <dl class="info">
+                <dt>주소</dt>
+                <dd th:text="${facility.fullAddress ?: '-'}">주소</dd>
+                <dt th:if="${facility.zipcode != null}">우편번호</dt>
+                <dd th:if="${facility.zipcode != null}" th:text="${facility.zipcode}">00000</dd>
+                <dt>전화</dt>
+                <dd th:text="${facility.phone ?: '-'}">전화</dd>
+                <dt th:if="${facility.fax != null}">팩스</dt>
+                <dd th:if="${facility.fax != null}" th:text="${facility.fax}">팩스</dd>
+                <dt th:if="${facility.facilityDetail != null}">상세 분류</dt>
+                <dd th:if="${facility.facilityDetail != null}" th:text="${facility.facilityDetail}">상세</dd>
+                <dt th:if="${facility.operatorName != null}">운영기관</dt>
+                <dd th:if="${facility.operatorName != null}" th:text="${facility.operatorName}">운영기관</dd>
+                <dt th:if="${facility.establishedDate != null}">설립일</dt>
+                <dd th:if="${facility.establishedDate != null}" th:text="${facility.establishedDate}">설립일</dd>
+                <dt>출처</dt>
+                <dd th:text="${facility.source} + ' · ' + ${facility.id}">출처</dd>
+            </dl>
+
+            <div class="actions">
+                <a class="btn btn-primary" th:href="${facility.mapUrl}" href="#" target="_blank" rel="noopener"
+                   th:text="${facility.hasLocation} ? '카카오맵 위치 보기 ↗' : '카카오맵에서 주소 검색 ↗'">카카오맵</a>
+                <a class="btn btn-outline" th:if="${facility.homepageUrl != null}" th:href="${facility.homepageUrl}"
+                   href="#" target="_blank" rel="noopener">홈페이지 ↗</a>
+            </div>
+        </article>
+
+        <aside>
+            <section class="panel" th:if="${!#lists.isEmpty(linked)}">
+                <h2 class="panel-title">같은 기관 (다른 출처)</h2>
+                <ul class="plain-list">
+                    <li th:each="l : ${linked}">
+                        <a th:href="@{/facilities/{id}(id=${l.id})}" href="#" th:text="${l.name}">시설명</a>
+                        <span class="source" th:text="${l.source}">출처</span>
+                    </li>
+                </ul>
+            </section>
+            <section class="panel" th:if="${!#lists.isEmpty(careServices)}">
+                <h2 class="panel-title">돌봄 서비스 프로그램</h2>
+                <ul class="plain-list">
+                    <li th:each="s : ${careServices}" th:text="${s.serviceName}">프로그램</li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+
+    <section>
+        <h2 class="section-title">이 시설의 봉사활동</h2>
+        <div class="card-grid" th:if="${!#lists.isEmpty(volunteers)}">
+            <th:block th:each="v : ${volunteers}">
+                <a th:replace="~{fragments/layout :: volunteerCard(${v})}"></a>
+            </th:block>
+        </div>
+        <p class="muted" th:if="${#lists.isEmpty(volunteers)}">
+            이 시설과 연결된 1365 봉사활동이 아직 없습니다.
+        </p>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

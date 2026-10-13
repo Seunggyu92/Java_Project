@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('봉사 찾기')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <h1 class="page-title">봉사 찾기</h1>
+
+    <form class="filter" th:action="@{/search}" th:object="${cond}" method="get" role="search">
+        <div class="search-bar">
+            <input type="search" th:field="*{q}" placeholder="지역 또는 봉사 분야 검색 (예: 강남구 환경정화)"
+                   aria-label="봉사 검색어">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </div>
+        <div class="filter-row">
+            <label>지역
+                <select th:field="*{sido}">
+                    <option value="">전체</option>
+                    <option th:each="r : ${regions}" th:value="${r.shortName}" th:text="${r.shortName}">서울</option>
+                </select>
+            </label>
+            <label>분야
+                <select th:field="*{category}">
+                    <option value="">전체</option>
+                    <option th:each="c : ${categories}" th:value="${c.code}" th:text="${c.label}">환경정화</option>
+                </select>
+            </label>
+            <label>시작일 <input type="date" th:field="*{from}"></label>
+            <label>종료일 <input type="date" th:field="*{to}"></label>
+            <label>정렬
+                <select th:field="*{sort}">
+                    <option value="latest">최신순</option>
+                    <option value="oldest">오래된순</option>
+                    <option value="hours">봉사시간 긴 순</option>
+                    <option value="people">참여 인원 많은 순</option>
+                </select>
+            </label>
+            <a th:href="@{/search}" href="#" class="btn btn-ghost">초기화</a>
+        </div>
+    </form>
+
+    <div class="result-head">
+        <p>
+            <strong th:text="${#numbers.formatInteger(result.total, 1, 'COMMA')}">0</strong>건
+            <span class="chips">
+                <span class="chip" th:if="${resolved.sido != null}" th:text="'지역 · ' + ${resolved.sido}">지역</span>
+                <span class="chip" th:if="${resolved.category != null}" th:text="'분야 · ' + ${resolved.category.label}">분야</span>
+                <span class="chip" th:each="k : ${resolved.keywords}" th:text="'“' + ${k} + '”'">키워드</span>
+            </span>
+        </p>
+        <a th:if="${resolved.category != null and resolved.category.code == 'BLOOD'}" th:href="@{/blood}" href="#"
+           class="more">🩸 가까운 헌혈의 집 보기 →</a>
+    </div>
+
+    <div class="card-grid" th:if="${!result.empty}">
+        <th:block th:each="v : ${result.content}">
+            <a th:replace="~{fragments/layout :: volunteerCard(${v})}"></a>
+        </th:block>
+    </div>
+
+    <section class="empty" th:if="${result.empty}">
+        <h2>조건에 맞는 봉사활동이 없습니다</h2>
+        <p class="muted">지역이나 분야 조건을 줄이거나 다른 검색어로 찾아보세요.</p>
+    </section>
+
+    <nav th:replace="~{fragments/layout :: pagination(${result}, ${cond})}"></nav>
+
+    <p class="notice">
+        현재 데이터는 공공데이터포털의 <b>1365 봉사 실적</b>(2021.12~2022.01)입니다.
+        실제 신청은 1365 자원봉사포털에서 진행합니다.
+    </p>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

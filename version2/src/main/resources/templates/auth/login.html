@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('로그인')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container auth">
+    <div class="auth-card">
+        <h1>로그인</h1>
+        <form th:action="@{/login(redirect=${redirect})}" th:object="${loginForm}" method="post" novalidate>
+            <div class="form-error" th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}"
+                 th:text="${err}">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+
+            <label for="email">이메일</label>
+            <input type="email" id="email" th:field="*{email}" placeholder="이메일을 입력하세요"
+                   autocomplete="username" th:errorclass="is-invalid">
+            <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">오류</p>
+
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요"
+                   autocomplete="current-password" th:errorclass="is-invalid">
+            <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">오류</p>
+
+            <button type="submit" class="btn btn-primary">로그인</button>
+        </form>
+        <p class="auth-switch"><a th:href="@{/signup}" href="signup.html">아직 회원이 아니신가요? 회원가입</a></p>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

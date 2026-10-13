@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${v.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <a th:href="@{/search}" href="#" class="back">← 봉사 목록</a>
+
+    <div class="detail-layout">
+        <article class="panel">
+            <span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(v.category.code)}"
+                  th:text="${v.category.icon} + ' ' + ${v.category.label}">분야</span>
+            <h1 class="detail-title" th:text="${v.title}">봉사활동명</h1>
+
+            <dl class="info">
+                <dt>기관</dt>
+                <dd th:text="${v.orgName}">기관명</dd>
+                <dt>지역</dt>
+                <dd th:text="${v.regionLabel}">지역</dd>
+                <dt>일시</dt>
+                <dd th:text="${v.dateLabel} + ' ' + ${v.timeLabel}">일시</dd>
+                <dt>인정 시간</dt>
+                <dd th:text="${v.hours} + '시간'">3시간</dd>
+                <dt>참여 인원</dt>
+                <dd th:text="${v.participantCount} + '명'">1명</dd>
+                <dt>활동 내용</dt>
+                <dd th:text="${v.content ?: '-'}">활동 내용</dd>
+            </dl>
+
+            <div class="actions">
+                <form th:action="@{/volunteers/{id}/favorite(id=${v.id})}" method="post" class="inline-form">
+                    <button type="submit" class="btn" th:classappend="${favorite} ? 'btn-primary' : 'btn-outline'"
+                            th:text="${favorite} ? '♥ 관심 봉사' : '♡ 관심 봉사 담기'">관심 봉사 담기</button>
+                </form>
+                <a class="btn btn-outline" href="https://www.1365.go.kr" target="_blank" rel="noopener">1365에서 신청하기 ↗</a>
+            </div>
+            <p class="muted small">출처: 행정안전부 1365 자원봉사포털 · 봉사 ID <span th:text="${v.id}">VOL-0</span></p>
+        </article>
+
+        <aside>
+            <section class="panel" th:if="${facility != null}">
+                <h2 class="panel-title">연결된 시설</h2>
+                <p class="strong"><a th:href="@{/facilities/{id}(id=${facility.id})}" href="#"
+                                     th:text="${facility.name}">시설명</a></p>
+                <p class="muted small" th:text="${facility.facilityType}">시설분류</p>
+                <p class="small" th:text="${facility.fullAddress}">주소</p>
+                <p class="small" th:if="${facility.phone != null}" th:text="'☎ ' + ${facility.phone}">전화</p>
+                <a class="btn btn-outline btn-block" th:href="${facility.mapUrl}" href="#" target="_blank" rel="noopener">
+                    카카오맵에서 보기 ↗</a>
+            </section>
+
+            <section class="panel">
+                <h2 class="panel-title">다녀왔나요? 기록 남기기</h2>
+                <th:block th:if="${loginMember != null}">
+                    <form th:action="@{/mypage/records}" method="post" class="stack">
+                        <input type="hidden" name="type" value="VOLUNTEER">
+                        <input type="hidden" name="volunteerId" th:value="${v.id}">
+                        <input type="hidden" name="place" th:value="${v.orgName}">
+                        <label>날짜 <input type="date" name="activityDate" th:value="${v.activityDate}" required></label>
+                        <label>봉사시간 <input type="number" name="hours" min="0.5" max="24" step="0.5"
+                                            th:value="${v.hours > 0 ? v.hours : 1}" required></label>
+                        <button type="submit" class="btn btn-primary btn-block">내 기록에 추가</button>
+                    </form>
+                </th:block>
+                <p th:if="${loginMember == null}" class="small">
+                    <a th:href="@{/login(redirect=${'/volunteers/' + v.id})}" href="#">로그인</a>하면
+                    봉사시간을 기록하고 대시보드에서 모아 볼 수 있어요.
+                </p>
+            </section>
+        </aside>
+    </div>
+
+    <section th:if="${!#lists.isEmpty(sameOrg)}">
+        <h2 class="section-title">같은 기관의 다른 활동</h2>
+        <div class="card-grid">
+            <th:block th:each="s : ${sameOrg}">
+                <a th:replace="~{fragments/layout :: volunteerCard(${s})}"></a>
+            </th:block>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

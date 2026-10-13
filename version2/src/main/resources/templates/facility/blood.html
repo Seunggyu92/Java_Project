@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('헌혈의 집')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">🩸 헌혈의 집</h1>
+    <p class="muted">전국 <strong th:text="${total}">0</strong>곳 · 대한적십자사 헌혈의 집 공공데이터 기준</p>
+
+    <nav class="region-tabs" aria-label="지역 선택">
+        <a th:href="@{/blood}" href="#" th:classappend="${selectedSido == null} ? 'active'">전체</a>
+        <a th:each="r : ${regions}" th:href="@{/blood(sido=${r.shortName})}" href="#"
+           th:classappend="${selectedSido == r.shortName} ? 'active'" th:text="${r.shortName}">서울</a>
+    </nav>
+
+    <details class="region-fold" th:each="entry, stat : ${bySido}" th:open="${stat.index == 0 or selectedSido != null}">
+        <summary>
+            <span th:text="${entry.key}">서울</span>
+            <span class="muted" th:text="${#lists.size(entry.value)} + '곳'">3곳</span>
+        </summary>
+        <div class="place-grid">
+            <article class="place-card blood-card" th:each="f : ${entry.value}">
+                <p class="place-type" th:text="${f.facilityDetail ?: '헌혈의 집'}">헌혈의 집</p>
+                <h2 class="place-name" th:text="${f.name}">센터명</h2>
+                <p class="place-address" th:text="${f.fullAddress}">주소</p>
+                <p class="place-phone" th:if="${f.phone != null}" th:text="${f.phone}">전화</p>
+                <a class="place-map" th:href="${f.mapUrl}" href="#" target="_blank" rel="noopener">지도에서 보기</a>
+            </article>
+        </div>
+    </details>
+
+    <section class="empty" th:if="${#maps.isEmpty(bySido)}">
+        <h2>이 지역에는 등록된 헌혈의 집이 없습니다</h2>
+    </section>
+
+    <p class="notice">
+        혈액 보유 현황과 운영 시간은 이 데이터에 없습니다. 방문 전 대한적십자사 혈액관리본부에서 확인하세요.
+        <a th:href="@{/search(category='BLOOD')}" href="#">헌혈 관련 봉사활동 보기 →</a>
+    </p>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
